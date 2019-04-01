@@ -276,4 +276,12 @@ public interface OsRepository {
      * @return console target type for given operating system and cluster version; may be {@code null} if not specified
      */
     ConsoleTargetType getOsConsoleTargetType(int osId, Version version);
+
+    /**
+     * Checks if the operating system requires special memory block when hot-plugging memory
+     * @param osId operating system id
+     * @param version aaa bbb
+     * @return bla
+     */
+    boolean requiresHotPlugSpecialBlock(int osId, Version version);
 }
