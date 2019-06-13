@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -105,14 +106,15 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     }
 
     @Override
-    public void init(final List<VM> externalVms, final Guid dataCenterId) {
+    public void init(final Map<String, VM> externalVms, final Guid dataCenterId) {
         setCloseCommand(new UICommand(null, this)
         .setTitle(ConstantsManager.getInstance().getConstants().close())
         .setIsDefault(true)
         .setIsCancel(true));
 
-        initIsoAndAttachDriversFields(externalVms);
-        setTargetArchitecture(externalVms);
+        List<VM> externalVmsList = externalVms.values().stream().collect(Collectors.toList());
+        initIsoAndAttachDriversFields(externalVmsList);
+        setTargetArchitecture(externalVmsList);
         withDataCenterLoaded(dataCenterId, returnValue -> setItems(r -> doInit(), externalVms));
     }
 

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -61,8 +60,8 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private String fqdn;
     private String compatibilityVersion;
     private String optimizedForSystemProfile;
-    private Map<Guid, String> vmNamesMap;
-    private Guid editedVmId;
+    private Map<String, String> vmNamesMap;
+    private String editedVmUniqueId;
 
     private ImportSource source;
 
@@ -83,7 +82,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
     @Override public void cleanup() {
         vmNamesMap.clear();
-        editedVmId = null;
+        editedVmUniqueId = null;
         super.cleanup();
     }
 
@@ -104,30 +103,30 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     }
 
     private void updateVmNamesMap(String editedName) {
-        if (editedVmId == null) {
+        if (editedVmUniqueId == null) {
             VM vm = getEntity().getVm();
-            vmNamesMap.put(vm.getId(), vm.getName());
+            vmNamesMap.put(getEntity().getUniqueID(), vm.getName());
             return;
         }
 
-        vmNamesMap.put(editedVmId, editedName);
+        vmNamesMap.put(editedVmUniqueId, editedName);
     }
 
     private void addVmOriginalNameToMapIfMissing() {
         // Add the VM Id with it's original name to the map in case it is missing
-        if (!vmNamesMap.containsKey(editedVmId)) {
-            vmNamesMap.put(editedVmId, getEntity().getVm().getName());
+        if (!vmNamesMap.containsKey(editedVmUniqueId)) {
+            vmNamesMap.put(editedVmUniqueId, getEntity().getVm().getName());
         }
     }
 
     private String getVmEditedName() {
-        return vmNamesMap.get(editedVmId);
+        return vmNamesMap.get(editedVmUniqueId);
     }
 
     private void updateProperties() {
         VM vm = getEntity().getVm();
         updateVmNamesMap(getName().getEntity());
-        editedVmId = vm.getId();
+        editedVmUniqueId = getEntity().getUniqueID();
 
         super.updateProperties(vm.getId());
         addVmOriginalNameToMapIfMissing();

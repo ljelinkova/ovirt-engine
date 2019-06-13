@@ -14,6 +14,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 @SuppressWarnings("unused")
 public class TemplateImportDiskListModel extends SearchableListModel {
     private List<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
+    private Map<String, List<DiskImage>> extendedItemsMap;
+    private ImportTemplateData editedTemplateData;
 
     public TemplateImportDiskListModel() {
         setIsTimerDisabled(true);
@@ -25,14 +27,19 @@ public class TemplateImportDiskListModel extends SearchableListModel {
 
         if (getEntity() != null) {
             ArrayList<DiskImage> list = new ArrayList<>();
-            VmTemplate template = (VmTemplate) getEntity();
-            for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
-                if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
-                    list.addAll(item.getValue());
-                    Collections.sort(list, new DiskByDiskAliasComparator());
-                    setItems(list);
-                    return;
+            if(extendedItems != null) {
+                for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
+                    VmTemplate template = (VmTemplate) getEntity();
+                    if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
+                        list.addAll(item.getValue());
+                        Collections.sort(list, new DiskByDiskAliasComparator());
+                        setItems(list);
+                        return;
+                    }
                 }
+            }
+            if (extendedItemsMap != null) {
+                setItems(extendedItemsMap.get(editedTemplateData.getUniqueID()));
             }
         } else {
             setItems(null);
@@ -41,11 +48,22 @@ public class TemplateImportDiskListModel extends SearchableListModel {
 
     @Override
     public void setEntity(Object value) {
-        super.setEntity(value != null ? ((ImportTemplateData) value).getTemplate() : null);
+        if (value != null && value instanceof ImportTemplateData) {
+            this.editedTemplateData = (ImportTemplateData) value;
+            super.setEntity(editedTemplateData.getTemplate(), true);
+        } else {
+            super.setEntity(null);
+        }
     }
 
     public void setExtendedItems(List<Map.Entry<VmTemplate, List<DiskImage>>> arrayList) {
         this.extendedItems = arrayList;
+        this.extendedItemsMap = null;
+    }
+
+    public void setExtendedItems(Map<String, List<DiskImage>> map) {
+        this.extendedItems = null;
+        this.extendedItemsMap = map;
     }
 
     @Override

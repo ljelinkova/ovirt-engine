@@ -14,6 +14,12 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
     private EntityModel<Boolean> clone;
     private ListModel<Cluster> cluster;
     private ListModel<Quota> clusterQuota;
+    /**
+     * This could be any string as long as it is unique in the list of imported VMs
+     *
+     * In case of OVA import it is the ova file name.
+     */
+    private String uniqueID;
 
     public ImportEntityData() {
         setClone(new EntityModel<>(false));
@@ -81,4 +87,12 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
     public abstract ArchitectureType getArchType();
 
     public abstract String getName();
+
+    public String getUniqueID() {
+        return uniqueID;
+    }
+
+    public void setUniqueID(String uniqueID) {
+        this.uniqueID = uniqueID;
+    }
 }

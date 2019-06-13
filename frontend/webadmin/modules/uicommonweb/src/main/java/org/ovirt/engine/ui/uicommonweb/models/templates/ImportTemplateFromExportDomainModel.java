@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -82,8 +84,12 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
     }
 
     public void init(final Collection<VmTemplate> externalTemplates, final Guid storageDomainId) {
+        initTemplates(generateMap(externalTemplates.stream().collect(Collectors.toList())), storageDomainId);
+    }
+
+    public void initTemplates(final Map<String, VmTemplate> externalTemplates, final Guid storageDomainId) {
         Frontend.getInstance().runQuery(QueryType.Search,
-                new SearchParameters(createSearchPattern(externalTemplates), SearchType.VmTemplate),
+                new SearchParameters(createSearchPattern(externalTemplates.values()), SearchType.VmTemplate),
                 new AsyncQuery<>(new AsyncCallback<QueryReturnValue>() {
 
                     @Override
@@ -92,13 +98,14 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
                         List<VmTemplate> vmtList = returnValue.getReturnValue();
 
                         List<ImportTemplateData> templateDataList = new ArrayList<>();
-                        for (VmTemplate template : externalTemplates) {
-                            ImportTemplateData templateData = new ImportTemplateData(template);
-                            boolean templateExistsInSystem = vmtList.contains(template);
+                        for (Entry<String, VmTemplate> entry : externalTemplates.entrySet()) {
+                            ImportTemplateData templateData = new ImportTemplateData(entry.getValue());
+                            templateData.setUniqueID(entry.getKey());
+                            boolean templateExistsInSystem = vmtList.contains(entry.getValue());
                             templateData.setExistsInSystem(templateExistsInSystem);
                             if (templateExistsInSystem) {
                                 templateData.enforceClone(constants.importTemplateThatExistsInSystemMustClone());
-                            } else if (!template.isBaseTemplate() && findAnyVmTemplateById(vmtList, template.getBaseTemplateId()) == null) {
+                            } else if (!entry.getValue().isBaseTemplate() && findAnyVmTemplateById(vmtList, entry.getValue().getBaseTemplateId()) == null) {
                                 templateData.enforceClone(constants.importTemplateWithoutBaseMustClone());
                             }
                             templateDataList.add(templateData);

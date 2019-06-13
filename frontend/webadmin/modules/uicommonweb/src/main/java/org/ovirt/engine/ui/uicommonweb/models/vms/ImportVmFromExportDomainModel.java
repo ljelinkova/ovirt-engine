@@ -386,7 +386,8 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         }), storageDomainId);
     }
 
-    public void init(final List<VM> externalVms, final Guid storageDomainId) {
+    @Override
+    public void init(final Map<String, VM> externalVms, final Guid storageDomainId) {
         withDataCenterLoaded(storageDomainId, returnValue -> setItems(r -> doInit(), externalVms));
     }
 

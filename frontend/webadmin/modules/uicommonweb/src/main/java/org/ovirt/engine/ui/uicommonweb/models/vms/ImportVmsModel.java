@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvaVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -92,7 +92,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private ListModel<VDS> hosts;
     private EntityModel<String> ovaPath;
-    private Map<String, String> vmNameToOva;
 
     private EntityModel<String> xenUri;
     private ListModel<VDS> xenProxyHosts;
@@ -233,7 +232,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromOvaModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
             importFromOvaModel.setIsoName(getOvaPath().getEntity());
             importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
-            importFromOvaModel.setVmNameToOva(vmNameToOva);
             selectedImportVmModel = importFromOvaModel;
             break;
         case XEN:
@@ -589,10 +587,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         startProgress();
         AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery<>(returnValue -> {
             if (returnValue.getSucceeded()) {
-                Map<VM, String> vmToOva = returnValue.getReturnValue();
-                vmNameToOva = vmToOva.entrySet().stream()
-                        .collect(Collectors.toMap(e -> e.getKey().getName(), Entry::getValue));
-                updateVms(vmToOva.keySet());
+                Map<String, VM> vmToOva = returnValue.getReturnValue();
+                updateVmsFromOva(vmToOva);
             } else {
                 setError(messages.failedToLoadOva(getOvaPath().getEntity()));
             }
@@ -784,11 +780,38 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         stopProgress();
     }
 
-    public List<VM> getVmsToImport() {
-        return importedVmModels.getItems()
+    private void updateVmsFromOva(Map<String, VM> vms) {
+        clearVms();
+        externalVmModels.setItems(vms.entrySet().stream().map(e -> new OvaVmModel(e.getKey(), e.getValue())).collect(Collectors.toList()));
+        stopProgress();
+    }
+
+    public Map<String, VM> getVmsToImport() {
+        if (ImportSource.OVA.equals(importSources.getSelectedItem())) {
+            return importedVmModels.getItems()
+                            .stream()
+                            .filter(e -> e instanceof OvaVmModel)
+                            .map(e -> (OvaVmModel) e)
+                            .collect(Collectors.toMap(OvaVmModel::getOvaFileName, OvaVmModel::getEntity ));
+        }
+        List<VM> vmsList = importedVmModels.getItems()
                 .stream()
                 .map(EntityModel::getEntity)
                 .collect(Collectors.toList());
+        return generateMap(vmsList);
+    }
+
+    /**
+     * Creates map with integer indexes as keys and VMs as values
+     * @param vmsList List of VM to be converted to map
+     * @return
+     */
+    protected Map<String, VM> generateMap(List<VM> vmsList) {
+        Map<String, VM> vmsMap = new HashMap<>();
+        for (int i = 0; i < vmsList.size(); i++) {
+            vmsMap.put(String.valueOf(i), vmsList.get(i));
+        }
+        return vmsMap;
     }
 
     private void addImport() {

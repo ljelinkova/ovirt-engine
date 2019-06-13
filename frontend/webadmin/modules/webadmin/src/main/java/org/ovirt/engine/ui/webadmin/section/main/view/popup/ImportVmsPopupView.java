@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvaVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -343,14 +344,20 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         externalVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
+                if (externalVmModel instanceof OvaVmModel) {
+                    return externalVmModel.getEntity().getName() + " (" + ((OvaVmModel) externalVmModel).getOvaFileName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
                 return externalVmModel.getEntity().getName();
             }
         }, constants.name());
 
         importedVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
-            public String getValue(EntityModel<VM> externalVmModel) {
-                return externalVmModel.getEntity().getName();
+            public String getValue(EntityModel<VM> importedVmModel) {
+                if (importedVmModel instanceof OvaVmModel) {
+                    return importedVmModel.getEntity().getName() + " (" + ((OvaVmModel) importedVmModel).getOvaFileName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                return importedVmModel.getEntity().getName();
             }
         }, constants.name());
     }

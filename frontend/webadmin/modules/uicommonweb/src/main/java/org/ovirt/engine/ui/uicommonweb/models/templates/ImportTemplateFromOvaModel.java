@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -37,7 +37,6 @@ public class ImportTemplateFromOvaModel extends ImportTemplateFromExportDomainMo
 
     protected String ovaPath;
     protected Guid hostId;
-    protected Map<String, String> templateNameToOva;
 
     @Inject
     public ImportTemplateFromOvaModel(VmImportDiskListModel vmImportDiskListModel,
@@ -79,8 +78,7 @@ public class ImportTemplateFromOvaModel extends ImportTemplateFromExportDomainMo
                     Guid.Empty,
                     getStoragePool().getId(),
                     getCluster().getSelectedItem().getId());
-            String ovaFilename = templateNameToOva.get(importTemplateData.getName());
-            prm.setOvaPath(ovaFilename == null ? ovaPath : ovaPath + "/" + ovaFilename); //$NON-NLS-1$
+            prm.setOvaPath(ovaPath + "/" + importTemplateData.getUniqueID()); //$NON-NLS-1$
             prm.setProxyHostId(hostId);
 
             if (getClusterQuota().getSelectedItem() != null &&
@@ -125,41 +123,41 @@ public class ImportTemplateFromOvaModel extends ImportTemplateFromExportDomainMo
         this.hostId = hostId;
     }
 
-    public void setTemplateNameToOva(Map<String, String> vmNameToOva) {
-        this.templateNameToOva = vmNameToOva;
+    public void init(final Collection<VmTemplate> externalTemplates, final Guid dataCenterId) {
+
     }
 
-    public void init(final Collection<VmTemplate> externalTemplates, final Guid dataCenterId) {
+    public void initTemplates(final Map<String, VmTemplate> externalTemplates, final Guid dataCenterId) {
         setCloseCommand(new UICommand(null, this)
                 .setTitle(ConstantsManager.getInstance().getConstants().close())
                 .setIsDefault(true)
                 .setIsCancel(true));
 
-        Map<VmTemplate, List<DiskImage>> templateToDisks = externalTemplates.stream()
-                .collect(Collectors.toMap(
-                        template -> template,
-                        template -> new ArrayList<>(template.getDiskTemplateMap().values())));
-        templateToDisks.keySet().forEach(template -> {
-            List<DiskImage> disks = template.getDiskList();
+        Map<String, List<DiskImage>> templateToDisks = new HashMap<String, List<DiskImage>>();
+
+        for (Entry<String, VmTemplate> entry : externalTemplates.entrySet()) {
+            List<DiskImage> disks = entry.getValue().getDiskList();
             disks.sort(new LexoNumericNameableComparator<>());
-            templateToDisks.put(template, disks);
-        });
-        ((TemplateImportDiskListModel) getImportDiskListModel()).setExtendedItems(new ArrayList<>(templateToDisks.entrySet()));
+            templateToDisks.put(entry.getKey(), disks);
+        }
+
+        ((TemplateImportDiskListModel) getImportDiskListModel()).setExtendedItems(templateToDisks);
 
         AsyncDataProvider.getInstance().getTemplateList(
-                createSearchPattern(externalTemplates),
+                createSearchPattern(externalTemplates.values()),
                 new AsyncQuery<>(returnValue -> {
                         UIConstants constants = ConstantsManager.getInstance().getConstants();
                         List<ImportTemplateData> templateDataList = new ArrayList<>();
                         List<VmTemplate> vmtList = returnValue.getReturnValue();
-                        for (VmTemplate template : externalTemplates) {
-                            ImportTemplateData templateData = new ImportTemplateData(template);
-                            boolean templateExistsInSystem = vmtList.contains(template);
+                        for (Entry<String, VmTemplate> entry : externalTemplates.entrySet()) {
+                            ImportTemplateData templateData = new ImportTemplateData(entry.getValue());
+                            templateData.setUniqueID(entry.getKey());
+                            boolean templateExistsInSystem = vmtList.contains(entry.getValue());
                             templateData.setExistsInSystem(templateExistsInSystem);
                             if (templateExistsInSystem) {
                                 templateData.enforceClone(constants.importTemplateThatExistsInSystemMustClone());
-                            } else if (!template.isBaseTemplate() &&
-                                    vmtList.stream().anyMatch(t -> t.getId().equals(template.getBaseTemplateId()))) {
+                            } else if (!entry.getValue().isBaseTemplate() &&
+                                    vmtList.stream().anyMatch(t -> t.getId().equals(entry.getValue().getBaseTemplateId()))) {
                                 templateData.enforceClone(constants.importTemplateWithoutBaseMustClone());
                             }
                             templateDataList.add(templateData);

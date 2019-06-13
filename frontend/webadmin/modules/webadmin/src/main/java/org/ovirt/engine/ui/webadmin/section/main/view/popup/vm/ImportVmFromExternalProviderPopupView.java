@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportNetworkData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromOvaModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -209,6 +210,9 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractTextColumn<ImportVmData> nameColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
             public String getValue(ImportVmData object) {
+                if (importModel instanceof ImportVmFromOvaModel) {
+                    return object.getName() + "(" + object.getUniqueID() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
                 return object.getName();
             }
         };

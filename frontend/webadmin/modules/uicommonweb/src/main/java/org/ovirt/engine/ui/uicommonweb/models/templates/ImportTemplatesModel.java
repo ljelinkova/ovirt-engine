@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -39,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvaTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EntityModelLexoNumericNameableComparator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
@@ -71,7 +71,6 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
 
     private ListModel<VDS> hosts;
     private EntityModel<String> ovaPath;
-    private Map<String, String> templateNameToOva;
 
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
@@ -375,26 +374,25 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
     }
 
     public ImportVmModel getSpecificImportModel() {
-        List<VmTemplate> templates = getTemplatesToImport();
-        Map<VmTemplate, List<DiskImage>> templateToDisks = templates.stream()
-                .collect(Collectors.toMap(
-                        template -> template,
-                        template -> new ArrayList<>(template.getDiskTemplateMap().values())));
-        List<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
-        for (Map.Entry<VmTemplate, List<DiskImage>> item : templateToDisks.entrySet()) {
-            items1.add(item);
-            VmTemplate template = item.getKey();
-            template.setDiskList(new ArrayList<>());
-            template.getDiskList().addAll(item.getValue());
-        }
-        templates.sort(new LexoNumericNameableComparator<>());
-
+        Map<String, VmTemplate> templates = getTemplatesToImport();
         selectedImportVmModel = null;
 
         switch(importSources.getSelectedItem()) {
         case EXPORT_DOMAIN:
+            Map<VmTemplate, List<DiskImage>> templateToDisks = templates.values().stream()
+            .collect(Collectors.toMap(
+                    template -> template,
+                    template -> new ArrayList<>(template.getDiskTemplateMap().values())));
+            List<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
+            for (Map.Entry<VmTemplate, List<DiskImage>> item : templateToDisks.entrySet()) {
+                items1.add(item);
+                VmTemplate template = item.getKey();
+                template.setDiskList(new ArrayList<>());
+                template.getDiskList().addAll(item.getValue());
+            }
+
             importFromExportDomainModel.setEntity(null);
-            importFromExportDomainModel.init(templates, exportDomain.getEntity().getId());
+            importFromExportDomainModel.initTemplates(templates, exportDomain.getEntity().getId());
             importFromExportDomainModel.setEntity(exportDomain.getEntity().getId());
             TemplateImportDiskListModel templateImportDiskListModel = (TemplateImportDiskListModel)
                     importFromExportDomainModel.getImportDiskListModel();
@@ -402,10 +400,9 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
             selectedImportVmModel = importFromExportDomainModel;
             break;
         case OVA:
-            importFromOvaModel.init(templates, getDataCenters().getSelectedItem().getId());
+            importFromOvaModel.initTemplates(templates, getDataCenters().getSelectedItem().getId());
             importFromOvaModel.setIsoName(getOvaPath().getEntity());
             importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
-            importFromOvaModel.setTemplateNameToOva(templateNameToOva);
             selectedImportVmModel = importFromOvaModel;
             break;
         default:
@@ -468,11 +465,33 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         this.ovaPath = ovaPath;
     }
 
-    public List<VmTemplate> getTemplatesToImport() {
-        return importedTemplatesModels.getItems()
+    public Map<String, VmTemplate> getTemplatesToImport() {
+        if (ImportSource.OVA.equals(importSources.getSelectedItem())) {
+            return importedTemplatesModels.getItems()
+                            .stream()
+                            .filter(e -> e instanceof OvaTemplateModel)
+                            .map(e -> (OvaTemplateModel) e)
+                            .collect(Collectors.toMap(OvaTemplateModel::getOvaFileName, OvaTemplateModel::getEntity ));
+        }
+
+        List<VmTemplate> templatesList = importedTemplatesModels.getItems()
                 .stream()
                 .map(EntityModel::getEntity)
                 .collect(Collectors.toList());
+        return generateMap(templatesList);
+    }
+
+    /**
+     * Creates map with integer indexes as keys and VMTemplates as values
+     * @param vmsTemplateList List of VMTemplates to be converted to map
+     * @return
+     */
+    protected Map<String, VmTemplate> generateMap(List<VmTemplate> vmTemplatesList) {
+        Map<String, VmTemplate> vmTemlatesMap = new HashMap<>();
+        for (int i = 0; i < vmTemplatesList.size(); i++) {
+            vmTemlatesMap.put(String.valueOf(i), vmTemplatesList.get(i));
+        }
+        return vmTemlatesMap;
     }
 
     @Override
@@ -516,6 +535,12 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         stopProgress();
     }
 
+    private void updateTemplatesFromOva(Map<String, VmTemplate> templates) {
+        clearTemplates();
+        externalTemplatesModels.setItems(templates.entrySet().stream().map(e -> new OvaTemplateModel(e.getKey(), e.getValue())).collect(Collectors.toList()));
+        stopProgress();
+    }
+
     public void loadVmFromOva() {
         clearForLoad();
         if (!validateOvaConfiguration()) {
@@ -525,10 +550,8 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         startProgress();
         AsyncDataProvider.getInstance().getTemplateFromOva(new AsyncQuery<>(returnValue -> {
             if (returnValue.getSucceeded()) {
-                Map<VmTemplate, String> templateToOva = returnValue.getReturnValue();
-                templateNameToOva = new HashMap<>();
-                templateToOva.forEach((template, ova) -> templateNameToOva.put(template.getName(), ova));
-                updateTemplates(templateToOva.keySet());
+                Map<String, VmTemplate> templateToOva = returnValue.getReturnValue();
+                updateTemplatesFromOva(templateToOva);
             } else {
                 setError(messages.failedToLoadOva(getOvaPath().getEntity()));
             }

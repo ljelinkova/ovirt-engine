@@ -2233,7 +2233,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         boolean vmsToImportHaveFullInfo = importVmsModel.vmsToImportHaveFullInfo();
 
 
-        if (vmsToImportHaveFullInfo && !importVmsModel.validateArchitectures(importVmsModel.getVmsToImport())) {
+        if (vmsToImportHaveFullInfo && !importVmsModel.validateArchitectures(importVmsModel.getVmsToImport().values().stream().collect(Collectors.toList()))) {
             return;
         }
 
@@ -2253,8 +2253,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         final List<String> vmsToImport = new ArrayList<>();
         OriginType originType = convertImportSourceToOriginType(importVmsModel.getImportSources().getSelectedItem());
 
-        final List<VM> externalVms = importVmsModel.getVmsToImport();
-        for (VM vm : externalVms) {
+        final Map<String, VM> externalVms = importVmsModel.getVmsToImport();
+        for (VM vm : externalVms.values()) {
             vmsToImport.add(vm.getName());
         }
 
@@ -2279,7 +2279,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 // find vms which have some kind of a problem retrieving them with their full info
                 // i.e. they were retrieved with their names only but not with their full info
                 if (remoteVms.size() != externalVms.size()) {
-                    for (VM vm : externalVms) {
+                    for (VM vm : externalVms.values()) {
                         if (!remoteVms.contains(vm)) {
                             nonRetrievedVms.add(vm);
                         }

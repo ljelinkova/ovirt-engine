@@ -3,7 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,7 +56,12 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
     public abstract void executeImport(IFrontendMultipleActionAsyncCallback callback);
     public abstract boolean validate();
-    public abstract void init(final List<VM> externalVms, final Guid dataCenterId);
+    public abstract void init(final Map<String, VM> externalVms, final Guid dataCenterId);
+
+    public void init(final List<VM> externalVms, final Guid dataCenterId) {
+        init(generateMap(externalVms), dataCenterId);
+    }
+
     protected final IEventListener<EventArgs> clusterChangedListener = new IEventListener<EventArgs>() {
 
         @Override
@@ -132,9 +140,9 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         this.storagePool = storagePool;
     }
 
-    public void setItems(final AsyncCallback<QueryReturnValue> callback, final List<VM>  externalVms) {
+    public void setItems(final AsyncCallback<QueryReturnValue> callback, final Map<String, VM>  externalVms) {
         Frontend.getInstance().runQuery(QueryType.Search,
-                new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
+                new SearchParameters(createSearchPattern(externalVms.values()), SearchType.VM),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     vmsFromDB = returnValue.getReturnValue();
 
@@ -145,9 +153,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                             .collect(Collectors.toSet());
 
                     List<ImportVmData> vmDataList = new ArrayList<>();
-                    for (VM vm : externalVms) {
-                        ImportVmData vmData = new ImportVmData(vm);
-                        if (vmsFromDB.contains(vm)) {
+                    for (Entry<String, VM> entry : externalVms.entrySet()) {
+                        ImportVmData vmData = new ImportVmData(entry.getValue());
+                        vmData.setUniqueID(entry.getKey());
+                        if (vmsFromDB.contains(entry.getValue())) {
                             vmData.setExistsInSystem(true);
                             vmData.getClone().setEntity(true);
                             vmData.getClone().setIsChangeable(false);
@@ -156,7 +165,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                                     .importVMThatExistsInSystemMustClone());
                         }
 
-                        vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));
+                        vmData.setNameExistsInTheSystem(existingNames.contains(entry.getValue().getName()));
 
                         vmDataList.add(vmData);
                     }
@@ -269,5 +278,18 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
     public void setCloseCommand(UICommand closeCommand) {
         this.closeCommand = closeCommand;
+    }
+
+    /**
+     * Creates map with integer indexes as keys and T as values
+     * @param list List of T to be converted to map
+     * @return
+     */
+    protected <T> Map<String, T> generateMap(List<T> vmsList) {
+        Map<String, T> vmsMap = new HashMap<>();
+        for (int i = 0; i < vmsList.size(); i++) {
+            vmsMap.put(String.valueOf(i), vmsList.get(i));
+        }
+        return vmsMap;
     }
 }
