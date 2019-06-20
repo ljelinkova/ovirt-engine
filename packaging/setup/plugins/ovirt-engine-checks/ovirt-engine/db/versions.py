@@ -171,6 +171,87 @@ class Plugin(plugin.PluginBase):
                     )
                 )
 
+    def _checkCPUFlags(self):
+        changedCpus = ["Secure Intel Skylake Server Family", "Intel Nehalem Family", "Secure Intel SandyBridge Family"]
+
+        statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        
+        cpuToCluster = self._getCpuToClusters(statement, '4.4')
+
+        cpuToFlags = self._getCpuToFlags(statement, '4.4')
+                
+        for changedCpu in changedCpus:
+            if (changedCpu not in cpuToCluster):
+                continue
+            self.logger.warning(_(
+		    	'The CPU flags have changed for CPU type ' + changedCpu +
+                ' New flags are: ' + cpuToFlags[changedCpu] +
+                '\n The following clusters might be affected:'
+                ))
+            for cluster in cpuToCluster[changedCpu]:
+                self.logger.warning('\t' + cluster) 
+
+        raise RuntimeError(
+                    _('Temporary error')
+                )
+    
+    def _getClusterTable(self, statement):
+        clusterTable = statement.execute(
+            statement="""
+                SELECT table_name FROM information_schema.tables
+                WHERE table_name IN ('vds_groups', 'cluster');
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+        return clusterTable[0]['table_name']
+
+    def _getCpuToClusters(self, statement, compatibility_version):
+        selectClusterSQL = _(
+            "SELECT name, cpu_name FROM {table} where compatibility_version='{version}';"
+        ).format(
+            table=self._getClusterTable(statement), version=compatibility_version
+        )
+        clusterCpuNames = statement.execute(
+            statement=selectClusterSQL,
+            ownConnection=True,
+            transaction=False,
+        )
+        cpuToCluster = dict()
+        if clusterCpuNames:
+            for clusterCpuName in clusterCpuNames:
+                if clusterCpuName['cpu_name'] not in cpuToCluster:
+                    cpuToCluster[clusterCpuName['cpu_name']] = [clusterCpuName['name']]
+                else:
+                    cpuToCluster[clusterCpuName['cpu_name']].append(clusterCpuName['name'])
+        return cpuToCluster
+
+    def _getCpuToFlags(self, statement, compatibility_version):
+        cpusFlags = statement.execute(
+            statement="""
+                select
+                    option_value
+                from
+                    vdc_options
+                where
+                    option_name = 'ServerCPUList'
+                    and
+                    version = '4.4'
+                """,
+            ownConnection=True,
+            transaction=False,
+            )
+        cpusFlagsArray = cpusFlags[0]['option_value'].split(";")
+        cpuDB = dict()
+        for cpuFlag in cpusFlagsArray:
+            if len(cpuFlag) > 0:
+                cpuFlagArray = cpuFlag.split(":")
+                cpuDB[cpuFlagArray[1]] = cpuFlagArray[3]
+        return cpuDB
+
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         after=(
@@ -186,6 +267,6 @@ class Plugin(plugin.PluginBase):
     def _validation(self):
         self._checkSupportedVersionsPresent()
         self._checkCompatibilityVersion()
-
+        self._checkCPUFlags()
 
 # vim: expandtab tabstop=4 shiftwidth=4
