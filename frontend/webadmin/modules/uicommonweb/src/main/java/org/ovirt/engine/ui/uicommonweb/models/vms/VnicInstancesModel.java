@@ -10,5 +10,4 @@ public class VnicInstancesModel extends ListModel<VnicInstanceType> {
     public ListModel<VnicProfileView> getVnicProfiles() {
         return vnicProfiles;
     }
-
 }

@@ -1103,7 +1103,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private WatchdogParameters buildWatchdogParameters(VmWatchdog vmWatchdog) {
         WatchdogParameters parameters = new WatchdogParameters();
-        parameters.setId(getParameters().getVmId());
+        parameters.setId(getVmId());
         parameters.setAction(vmWatchdog.getAction());
         parameters.setModel(vmWatchdog.getModel());
         return parameters;
@@ -1127,7 +1127,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null) {
-            getVmDeviceUtils().addManagedDevice(new VmDeviceId(Guid.newGuid(), getParameters().getVmId()),
+            getVmDeviceUtils().addManagedDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
                     VmDeviceGeneralType.DISK,
                     payload.getDeviceType(),
                     payload.getSpecParams(),

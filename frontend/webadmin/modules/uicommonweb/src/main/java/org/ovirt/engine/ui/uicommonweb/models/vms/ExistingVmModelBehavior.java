@@ -100,7 +100,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         }
     }
 
-    private void loadDataCenter() {
+    protected void loadDataCenter() {
         // Preinitialize the VM compatibility version because it's needed during init
         Version newCustomCompatibilityVersion =
                 ((ExistingVmModelBehavior) getModel().getBehavior()).getVm().getStaticData().getCustomCompatibilityVersion();
