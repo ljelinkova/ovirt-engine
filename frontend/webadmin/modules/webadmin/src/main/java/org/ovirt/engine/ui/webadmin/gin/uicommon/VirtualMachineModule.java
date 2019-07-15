@@ -64,7 +64,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.ImportVmFromExternalProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
@@ -118,7 +117,6 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider,
             final Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider,
             final Provider<ImportVmsPopupPresenterWidget> importVmsProvider,
-            final Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
             final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmFromExportDomainPopupProvider,
             final Provider<ImportVmFromExternalProviderPopupPresenterWidget> importVmFromExternalProviderProvider,
             final Provider<VmListModel<Void>> modelProvider,
@@ -157,8 +155,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return vncWindoProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditConsoleCommand()) {
                             return consolePopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
-                            return cloneVmProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportOvaCommand()) {
                             return exportOvaPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getImportVmCommand()
