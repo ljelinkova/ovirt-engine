@@ -67,6 +67,11 @@ public class CpuFlagsManagerHandler implements BackendService {
         return cpuFlagsManager != null ? cpuFlagsManager.getArchitectureByCpuName(name) : null;
     }
 
+    public Set<String> getFlagsByCpuName(String name, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getFlagsByCpuName(name) : null;
+    }
+
     public List<ServerCpu> allServerCpuList(Version ver) {
         final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
         return cpuFlagsManager != null ? cpuFlagsManager.getAllServerCpuList() : new ArrayList<>();
@@ -81,6 +86,34 @@ public class CpuFlagsManagerHandler implements BackendService {
     public List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags, Version ver) {
         final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
         return cpuFlagsManager != null ? cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags) : null;
+    }
+
+    /**
+     * Returns missing CPU flags if any, or null if the server match the
+     * cluster CPU flags
+     *
+     * @return list of missing CPU flags
+     */
+    public List<String> missingClusterCpuFlags(String clusterCpuFlagsString, String serverFlagsString) {
+        List<String> missingFlags = null;
+
+        List<String> clusterFlags =
+                        StringUtils.isEmpty(clusterCpuFlagsString) ? new ArrayList<>()
+                                : Arrays.asList(clusterCpuFlagsString.split("[,]", -1));
+
+        Set<String> serverFlags =
+                StringUtils.isEmpty(serverFlagsString) ? new HashSet<>()
+                        : new HashSet<>(Arrays.asList(serverFlagsString.split("[,]", -1)));
+
+        for (String flag : clusterFlags) {
+            if (!serverFlags.contains(flag)) {
+                if (missingFlags == null) {
+                    missingFlags = new ArrayList<>();
+                }
+                missingFlags.add(flag);
+            }
+        }
+        return missingFlags;
     }
 
     public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
@@ -143,6 +176,15 @@ public class CpuFlagsManagerHandler implements BackendService {
             }
 
             return ArchitectureType.undefined;
+        }
+
+        public Set<String> getFlagsByCpuName(String cpuName) {
+            ServerCpu cpu = getServerCpuByName(cpuName);
+            if (cpu != null) {
+                return cpu.getFlags();
+            }
+
+            return null;
         }
 
         public String getVendorByCpuName(String cpuName) {

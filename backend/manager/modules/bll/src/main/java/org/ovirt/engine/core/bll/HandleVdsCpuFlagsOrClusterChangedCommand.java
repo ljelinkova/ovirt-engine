@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -67,9 +68,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
     @Override
     protected void executeCommand() {
-        if (maxServerFound() && StringUtils.isEmpty(getCluster().getCpuName())) {
-            updateClusterCpuName(getMaxServerCpu().getCpuName(), getMaxServerCpu().getArchitecture());
-        }
+        updateClusterCpuInfo(getMaxServerCpu().getCpuName(), getMaxServerCpu().getArchitecture());
 
         if (!architecturesMatch() ) {
             addCustomValue("VdsArchitecture", getMaxServerCpu().getArchitecture().name());
@@ -82,10 +81,9 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                     params,
                     ExecutionHandler.createInternalJobContext(getContext()));
         } else {
-            List<String> missingFlags = getCpuFlagsManagerHandler().missingServerCpuFlags(
-                                           getCluster().getCpuName(),
-                                           getVds().getCpuFlags(),
-                                           getCluster().getCompatibilityVersion());
+            List<String> missingFlags = getCpuFlagsManagerHandler().missingClusterCpuFlags(
+                                           getCluster().getCpuFlags(),
+                                           getVds().getCpuFlags());
             if (!cpuFlagsMatch(missingFlags)) {
                 if (missingFlags != null) {
                     addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
@@ -107,19 +105,30 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         setSucceeded(true);
     }
 
-    private void updateClusterCpuName(String cpuName, ArchitectureType architecture) {
-        getCluster().setCpuName(cpuName);
-        getCluster().setArchitecture(architecture);
+    private void updateClusterCpuInfo(String cpuName, ArchitectureType architecture) {
+        if (maxServerFound() && StringUtils.isEmpty(getCluster().getCpuName())) {
+            getCluster().setCpuName(cpuName);
+            getCluster().setArchitecture(architecture);
+        }
+
+        if (StringUtils.isEmpty(getCluster().getCpuFlags()) && !StringUtils.isEmpty(getClusterName())) {
+            Set<String> flags = getCpuFlagsManagerHandler().getFlagsByCpuName(
+                                    getCluster().getCpuName(),
+                                    getCluster().getCompatibilityVersion());
+            if (flags != null) {
+                getCluster().setCpuFlags(StringUtils.join(flags, ","));
+            }
+        }
 
         updateMigrateOnError(getCluster());
 
         // use suppress in order to update group even if action fails
         // (out of the transaction)
-        ManagementNetworkOnClusterOperationParameters tempVar =
+        ManagementNetworkOnClusterOperationParameters params =
                 new ManagementNetworkOnClusterOperationParameters(getCluster());
-        tempVar.setTransactionScopeOption(TransactionScopeOption.Suppress);
-        tempVar.setIsInternalCommand(true);
-        runInternalAction(ActionType.UpdateCluster, tempVar);
+        params.setTransactionScopeOption(TransactionScopeOption.Suppress);
+        params.setIsInternalCommand(true);
+        runInternalAction(ActionType.UpdateCluster, params);
     }
 
     private boolean architecturesMatch() {
@@ -166,11 +175,11 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getMaxServerCpu() == null) {
+        if (!maxServerFound()) {
             return AuditLogType.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION;
         } else if (!architecturesMatch()) {
             return AuditLogType.VDS_ARCHITECTURE_NOT_SUPPORTED_FOR_CLUSTER;
-        } else if (vdsContainsFlags()) {
+        } else if (!vdsContainsFlags()) {
             return AuditLogType.VDS_CPU_RETRIEVE_FAILED;
         } else {
             return AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER;
