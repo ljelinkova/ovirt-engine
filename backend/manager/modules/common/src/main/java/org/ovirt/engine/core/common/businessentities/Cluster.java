@@ -48,6 +48,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
     private String cpuName;
 
+    private String cpuFlags;
+
     private Guid storagePoolId;
 
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
@@ -228,6 +230,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setCpuName(String value) {
         cpuName = value;
+    }
+
+    public String getCpuFlags() {
+        return cpuFlags;
+    }
+
+    public void setCpuFlags(String cpuFlags) {
+        this.cpuFlags = cpuFlags;
     }
 
     @Override
