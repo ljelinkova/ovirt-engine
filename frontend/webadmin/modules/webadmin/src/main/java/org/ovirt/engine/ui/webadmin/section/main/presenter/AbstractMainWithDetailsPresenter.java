@@ -66,7 +66,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     public static final Slot<OvirtBreadCrumbsPresenterWidget<?, ?>> TYPE_SetBreadCrumbs = new Slot<>();
 
-    public static final Slot<ActionPanelPresenterWidget<?, ?>> TYPE_SetActionPanel = new Slot<>();
+    public static final Slot<ActionPanelPresenterWidget<?, ?, ?>> TYPE_SetActionPanel = new Slot<>();
 
     private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
 
@@ -82,7 +82,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
             SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget,
             OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget,
-            ActionPanelPresenterWidget<T, M> actionPanelPresenterWidget) {
+            ActionPanelPresenterWidget<?, ?, ?> actionPanelPresenterWidget) {
         super(eventBus, view, proxy, placeManager, modelProvider, actionPanelPresenterWidget);
         this.searchPanelPresenterWidget = searchPanelPresenterWidget;
         this.breadCrumbsPresenterWidget = breadCrumbsPresenterWidget;

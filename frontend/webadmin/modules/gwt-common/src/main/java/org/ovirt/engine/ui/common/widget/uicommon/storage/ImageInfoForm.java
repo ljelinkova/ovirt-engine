@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.ImageInfoModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiConstructor;
 
-public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> {
+public class ImageInfoForm extends AbstractModelBoundFormWidget<String, ImageInfoModel> {
 
     interface Driver extends UiCommonEditorDriver<ImageInfoModel, ImageInfoForm> {
     }

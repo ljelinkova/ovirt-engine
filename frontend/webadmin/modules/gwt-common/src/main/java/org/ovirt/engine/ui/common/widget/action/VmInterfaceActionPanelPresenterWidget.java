@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -14,14 +15,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class VmInterfaceActionPanelPresenterWidget
-    extends DetailActionPanelPresenterWidget<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> {
+    extends DetailActionPanelPresenterWidget<VM, VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public VmInterfaceActionPanelPresenterWidget(EventBus eventBus,
             DetailActionPanelPresenterWidget.ViewDef<VmNetworkInterface> view,
-            SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> dataProvider) {
+            SearchableDetailModelProvider<VM, VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 

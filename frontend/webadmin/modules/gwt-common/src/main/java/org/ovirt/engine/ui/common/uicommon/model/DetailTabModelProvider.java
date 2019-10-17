@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -14,7 +14,7 @@ import com.google.inject.Provider;
  * @param <M> Main model type (extends ListWithDetailsModel)
  * @param <D> Detail model type (extends EntityModel)
  */
-public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends EntityModel> extends TabModelProvider<D> implements DetailModelProvider<M, D> {
+public class DetailTabModelProvider<E, T, M extends ListWithDetailsModel<?, E>, D extends SearchableListModel<E, T>> extends TabModelProvider<E, D> implements DetailModelProvider<E, M, D> {
 
     private Provider<M> mainModelProvider;
 

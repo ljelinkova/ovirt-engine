@@ -39,8 +39,8 @@ public class SubTabVirtualMachineAffinityGroupPresenter
     @Inject
     public SubTabVirtualMachineAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
-            AffinityGroupActionPanelPresenterWidget<VmListModel<Void>, VmAffinityGroupListModel> actionPanel,
-            SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
+            AffinityGroupActionPanelPresenterWidget<VM, VmListModel<Void>, VmAffinityGroupListModel> actionPanel,
+            SearchableDetailModelProvider<VM, AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

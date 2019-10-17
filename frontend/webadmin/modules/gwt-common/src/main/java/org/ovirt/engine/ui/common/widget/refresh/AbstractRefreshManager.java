@@ -51,14 +51,14 @@ public abstract class AbstractRefreshManager<T extends RefreshPanel> implements 
         return Collections.unmodifiableSet(REFRESH_RATES);
     }
 
-    private final ModelProvider<? extends GridController> modelProvider;
+    private final ModelProvider<?, ?> modelProvider;
     private final ClientStorage clientStorage;
     private final T refreshPanel;
     private final EventBus eventBus;
     private ManualRefreshCallback manualRefreshCallback;
     private HandlerRegistration statusUpdateHandlerRegistration;
 
-    public AbstractRefreshManager(ModelProvider<? extends GridController> modelProvider,
+    public AbstractRefreshManager(ModelProvider<?, ?> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         this.modelProvider = modelProvider;
         this.clientStorage = clientStorage;
@@ -92,7 +92,10 @@ public abstract class AbstractRefreshManager<T extends RefreshPanel> implements 
      * Returns the refresh timer used by the {@link GridController}.
      */
     GridTimer getModelTimer() {
-        return modelProvider.getModel().getTimer();
+        if (modelProvider.getModel() instanceof GridController) {
+            return ((GridController) modelProvider.getModel()).getTimer();
+        }
+        return null;
     }
 
     /**
@@ -122,7 +125,9 @@ public abstract class AbstractRefreshManager<T extends RefreshPanel> implements 
                 manualRefreshCallback.onManualRefresh();
             }
             ManualRefreshEvent.fire(AbstractRefreshManager.this);
-            modelProvider.getModel().refresh();
+            if (modelProvider.getModel() instanceof GridController) {
+                ((GridController) modelProvider.getModel()).refresh();;
+            }
         });
     }
 

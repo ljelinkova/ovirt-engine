@@ -18,7 +18,7 @@ import com.google.inject.Provider;
  * @param <D>
  *            Detail model type.
  */
-public class SearchableDetailTabModelProvider<T, M extends ListWithDetailsModel, D extends SearchableListModel> extends SearchableTabModelProvider<T, D> implements SearchableDetailModelProvider<T, M, D> {
+public class SearchableDetailTabModelProvider<E, T, M extends ListWithDetailsModel<?, E>, D extends SearchableListModel<E, T>> extends SearchableTabModelProvider<E, T, D> implements SearchableDetailModelProvider<E, T, M, D> {
 
     private Provider<M> mainModelProvider;
 

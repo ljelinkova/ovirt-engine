@@ -8,11 +8,10 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
  * @param <M>
  *            Model type.
  */
-public interface ModelProvider<M extends HasEntity> {
+public interface ModelProvider<E, M extends HasEntity<E>> {
 
     /**
      * Returns the model instance.
      */
     M getModel();
-
 }

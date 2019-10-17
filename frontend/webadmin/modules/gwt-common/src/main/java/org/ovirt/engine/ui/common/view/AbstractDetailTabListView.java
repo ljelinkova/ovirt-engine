@@ -1,11 +1,12 @@
 package org.ovirt.engine.ui.common.view;
 
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
-import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -24,15 +25,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
  * @param <M> Main model list model type. eg. VmListModel
  * @param <D> Detail model type.
  */
-public abstract class AbstractDetailTabListView<T, M extends ListWithDetailsModel, D extends HasEntity>
+public abstract class AbstractDetailTabListView<E, T, M extends ListWithDetailsModel<?, E>, D extends SearchableListModel<E, T>>
     extends AbstractView implements AbstractSubTabPresenter.ViewDef<T> {
 
-    private final DetailModelProvider<M, D> modelProvider;
+    private final DetailModelProvider<E, M, D> modelProvider;
     private final ScrollPanel scrollPanel = new ScrollPanel();
     private final FlowPanel container = new FlowPanel();
     private PlaceTransitionHandler placeTransitionHandler;
 
-    public AbstractDetailTabListView(DetailModelProvider<M, D> modelProvider) {
+    public AbstractDetailTabListView(DetailModelProvider<E, M, D> modelProvider) {
         this.modelProvider = modelProvider;
     }
 

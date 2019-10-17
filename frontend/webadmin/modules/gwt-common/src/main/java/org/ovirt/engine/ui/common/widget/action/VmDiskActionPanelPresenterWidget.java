@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.action;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -17,7 +18,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 
-public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenterWidget<Disk, VmListModel<Void>, VmDiskListModel> {
+public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenterWidget<VM, Disk, VmListModel<Void>, VmDiskListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -27,7 +28,7 @@ public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenter
     @Inject
     public VmDiskActionPanelPresenterWidget(EventBus eventBus,
             DetailActionPanelPresenterWidget.ViewDef<Disk> view,
-            SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> dataProvider) {
+            SearchableDetailModelProvider<VM, Disk, VmListModel<Void>, VmDiskListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 

@@ -6,19 +6,19 @@ import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
 
 public abstract class ColumnResizeTableLineChartProgressBar<T> extends AbstractLineChartProgressBarColumn<T>{
 
-    private AbstractActionTable<T> table;
+    private AbstractActionTable<?, T, ?> table;
 
-    protected ColumnResizeTableLineChartProgressBar(AbstractActionTable<T> table, String sortBy) {
+    protected ColumnResizeTableLineChartProgressBar(AbstractActionTable<?, T, ?> table, String sortBy) {
         this(table);
         makeSortable(sortBy);
     }
 
-    protected ColumnResizeTableLineChartProgressBar(AbstractActionTable<T> table, Comparator<? super T> comparator) {
+    protected ColumnResizeTableLineChartProgressBar(AbstractActionTable<?, T, ?> table, Comparator<? super T> comparator) {
         this(table);
         makeSortable(comparator);
     }
 
-    protected ColumnResizeTableLineChartProgressBar(AbstractActionTable<T> table) {
+    protected ColumnResizeTableLineChartProgressBar(AbstractActionTable<?, T, ?> table) {
         this.table = table;
     }
 

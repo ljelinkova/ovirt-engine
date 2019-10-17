@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -22,16 +23,16 @@ import com.google.gwt.user.client.ui.IsWidget;
  * @param <D>
  *            Detail model type.
  */
-public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, D extends HasEntity>
+public abstract class AbstractSubTabFormView<E, T, M extends ListWithDetailsModel<?, E>, D extends SearchableListModel<E, T>>
         extends AbstractView implements AbstractSubTabPresenter.ViewDef<T> {
 
     private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
 
-    private final DetailModelProvider<M, D> modelProvider;
+    private final DetailModelProvider<E, M, D> modelProvider;
 
     private PlaceTransitionHandler placeTransitionHandler;
 
-    public AbstractSubTabFormView(DetailModelProvider<M, D> modelProvider) {
+    public AbstractSubTabFormView(DetailModelProvider<E, M, D> modelProvider) {
         this.modelProvider = modelProvider;
     }
 

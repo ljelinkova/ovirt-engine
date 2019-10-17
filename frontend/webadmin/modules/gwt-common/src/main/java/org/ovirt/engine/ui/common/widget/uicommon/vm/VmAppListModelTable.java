@@ -11,12 +11,12 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class VmAppListModelTable extends AbstractModelBoundTableWidget<String, VmAppListModel<VM>> {
+public class VmAppListModelTable extends AbstractModelBoundTableWidget<VM, String, VmAppListModel<VM>> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmAppListModelTable(
-            SearchableTableModelProvider<String, VmAppListModel<VM>> modelProvider,
+            SearchableTableModelProvider<VM, String, VmAppListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         // No action panel for vm app list model table, passing null.
         super(modelProvider, eventBus, null, clientStorage, false);

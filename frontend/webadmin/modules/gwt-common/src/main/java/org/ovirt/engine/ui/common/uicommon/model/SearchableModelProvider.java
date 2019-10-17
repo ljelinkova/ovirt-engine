@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.uicommon.model;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 /**
@@ -12,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  * @param <M>
  *            List model type.
  */
-public interface SearchableModelProvider<T, M extends SearchableListModel> extends ModelProvider<M> {
+public interface SearchableModelProvider<E, T, D extends SearchableListModel<E, T>> extends ModelProvider<E, D> {
 
     /**
      * Updates the item selection of the model.

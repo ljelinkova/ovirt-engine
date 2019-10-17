@@ -6,10 +6,12 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 /**
  * Provider of {@link SearchableListModel} instances that is also an {@link ActionTableDataProvider}.
  *
+ * @param <E>
+ *            Main entity type.
  * @param <T>
- *            List model item type.
+ *            Detail entity type.
  * @param <M>
  *            List model type.
  */
-public interface SearchableTableModelProvider<T, M extends SearchableListModel> extends SearchableModelProvider<T, M>, ActionTableDataProvider<T> {
+public interface SearchableTableModelProvider<E, T, D extends SearchableListModel<E, T>> extends SearchableModelProvider<E, T, D>, ActionTableDataProvider<T> {
 }

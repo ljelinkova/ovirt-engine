@@ -24,20 +24,20 @@ import com.google.gwt.user.client.ui.SimplePanel;
 /**
  * Base class for sub tab views that use {@link SimpleActionTable} directly.
  *
- * @param <I> Main tab table row data type.
+ * @param <E> Main tab table row data type.
  * @param <T> Sub tab table row data type.
- * @param <M> Main model type (extends ListWithDetailsModel)
- * @param <D> Detail model type (extends SearchableListModel)
+ * @param <M> Main list model type (extends ListWithDetailsModel)
+ * @param <D> Detail list model type (extends SearchableListModel)
  */
-public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel>
-    extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
+public abstract class AbstractSubTabTableView<E, T, M extends ListWithDetailsModel<?, E>, D extends SearchableListModel<E, T>>
+        extends AbstractView implements AbstractSubTabPresenter.ViewDef<E> {
 
     private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
 
-    private final SearchableDetailModelProvider<T, M, D> modelProvider;
+    private final SearchableDetailModelProvider<E, T, M, D> modelProvider;
 
     @WithElementId
-    public final SimpleActionTable<T> table;
+    public final SimpleActionTable<E, T, D> table;
 
     private final FlowPanel container = new FlowPanel();
     private final SimplePanel actionPanelContainer = new SimplePanel();
@@ -45,7 +45,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
 
     private PlaceTransitionHandler placeTransitionHandler;
 
-    public AbstractSubTabTableView(SearchableDetailModelProvider<T, M, D> modelProvider) {
+    public AbstractSubTabTableView(SearchableDetailModelProvider<E, T, M, D> modelProvider) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
         container.add(actionPanelContainer);
@@ -71,8 +71,8 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         }
     }
 
-    protected SimpleActionTable<T> createActionTable() {
-        return new SimpleActionTable<T>(modelProvider, getTableResources(),
+    protected SimpleActionTable<E, T, D> createActionTable() {
+        return new SimpleActionTable<E, T, D>(modelProvider, getTableResources(),
                 ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
             {
                 if (useTableWidgetForContent()) {
@@ -99,7 +99,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     }
 
     @Override
-    public SimpleActionTable<T> getTable() {
+    public SimpleActionTable<E, T, D> getTable() {
         return table;
     }
 
@@ -108,12 +108,12 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         return container;
     }
 
-    protected SearchableDetailModelProvider<T, M, D> getModelProvider() {
+    protected SearchableDetailModelProvider<E, T, M, D> getModelProvider() {
         return this.modelProvider;
     }
 
     @Override
-    public void setMainSelectedItem(I selectedItem) {
+    public void setMainSelectedItem(E selectedItem) {
         // No-op since table-based sub tab views don't handle main tab selection on their own
     }
 

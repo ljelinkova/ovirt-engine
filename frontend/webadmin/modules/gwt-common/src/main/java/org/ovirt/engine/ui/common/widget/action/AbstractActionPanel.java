@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.constants.Toggle;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
@@ -18,9 +19,9 @@ import com.google.gwt.user.client.ui.Widget;
  *
  * @param <T> List model item type.
  */
-public abstract class AbstractActionPanel<T> extends Composite implements HasElementId, ProvidesElementId {
+public abstract class AbstractActionPanel<E, T, M extends SearchableListModel<E, T>> extends Composite implements HasElementId, ProvidesElementId {
 
-    private final SearchableModelProvider<T, ?> dataProvider;
+    private final SearchableModelProvider<E, T, M> dataProvider;
 
     @UiField
     public DropDown menuContainer = new DropDown();
@@ -35,7 +36,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
      * Constructor.
      * @param dataProvider The data provider.
      */
-    public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider) {
+    public AbstractActionPanel(SearchableModelProvider<E, T, M> dataProvider) {
         this.dataProvider = dataProvider;
     }
 
@@ -43,7 +44,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
      * Returns the model data provider.
      * @return The {@code SearchableModelProvider}.
      */
-    protected SearchableModelProvider<T, ?> getDataProvider() {
+    protected SearchableModelProvider<E, T, M> getDataProvider() {
         return dataProvider;
     }
 

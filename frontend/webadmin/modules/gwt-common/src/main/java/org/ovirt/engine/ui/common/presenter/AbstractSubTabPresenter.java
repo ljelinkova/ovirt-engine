@@ -13,9 +13,9 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
-import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
@@ -35,15 +35,15 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
 /**
  * Base class for presenters representing sub tabs that react to item selection changes within main tab presenters.
  *
- * @param <T> Main tab table row data type.
+ * @param <E> Main tab table row data type.
  * @param <M> Main model type (extends ListWithDetailsModel)
  * @param <D> Detail model type extends HasEntity
  * @param <V> View type (extends AbstractSubTabPresenter.ViewDef)
  * @param <P> Proxy type (extends TabContentProxyPlace)
  */
-public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity,
-  V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
-        extends AbstractTabPresenter<V, P> implements PlaceTransitionHandler, MainSelectedItemChangeListener<T> {
+public abstract class AbstractSubTabPresenter<E, T, M extends ListWithDetailsModel<?, E>, D extends SearchableListModel<E, T>,
+  V extends AbstractSubTabPresenter.ViewDef<E>, P extends TabContentProxyPlace<?>>
+        extends AbstractTabPresenter<V, P> implements PlaceTransitionHandler, MainSelectedItemChangeListener<E> {
 
     @GenEvent
     public class DetailItemSelectionChange {
@@ -55,12 +55,12 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will
     // require adding new type parameter to presenter (do later as part of refactoring)
     @SuppressWarnings("rawtypes")
-    public interface ViewDef<T> extends View, HasActionTable {
+    public interface ViewDef<E> extends View, HasActionTable {
 
         /**
          * Notifies the view that the main tab item selection has changed.
          */
-        void setMainSelectedItem(T selectedItem);
+        void setMainSelectedItem(E selectedItem);
 
         void resizeToFullHeight();
 
@@ -71,11 +71,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
 
-    public static final Slot<ActionPanelPresenterWidget<?, ?>> TYPE_SetActionPanel = new Slot<>();
+    public static final Slot<ActionPanelPresenterWidget<?, ?, ?>> TYPE_SetActionPanel = new Slot<>();
 
     private final ApplicationPlaceManager placeManager;
-    private final DetailModelProvider<M, D> modelProvider;
-    private final AbstractMainSelectedItems<T> selectedMainItems;
+    private final DetailModelProvider<E, M, D> modelProvider;
+    private final AbstractMainSelectedItems<E> selectedMainItems;
     private boolean resizing = false;
     private PlaceRequest currentPlace;
 
@@ -86,9 +86,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
      *                                                         D - Detail model type extends HasEntity
      */
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
-            PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
-            AbstractMainSelectedItems<T> selectedMainItems,
-            ActionPanelPresenterWidget<?, M> actionPanelPresenterWidget,
+            PlaceManager placeManager, DetailModelProvider<E, M, D> modelProvider,
+            AbstractMainSelectedItems<E> selectedMainItems,
+            ActionPanelPresenterWidget<E, T, D> actionPanelPresenterWidget,
             NestedSlot slot) {
         super(eventBus, view, proxy, actionPanelPresenterWidget, slot);
         this.placeManager = (ApplicationPlaceManager) placeManager;
@@ -111,7 +111,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 updateDetailModelSelection();
             }));
         }
-        OvirtSelectionModel<T> mainModelSelectionModel = getMainModel().getSelectionModel();
+        OvirtSelectionModel<E> mainModelSelectionModel = getMainModel().getSelectionModel();
         if (mainModelSelectionModel != null) {
             registerHandler(mainModelSelectionModel.addSelectionChangeHandler(event -> {
                 itemChanged(mainModelSelectionModel.getFirstSelectedObject());
@@ -142,7 +142,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     }
 
     @Override
-    public void itemChanged(T item) {
+    public void itemChanged(E item) {
         boolean widgetVisible = getView().asWidget().isVisible();
         if (item != null && widgetVisible) {
             placeManager.setFragmentParameters(getFragmentParamsFromEntity(item));
@@ -154,7 +154,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         }
     }
 
-    protected Map<String, String> getFragmentParamsFromEntity(T item) {
+    protected Map<String, String> getFragmentParamsFromEntity(E item) {
         Map<String, String> result = new HashMap<>();
         if (item != null) {
             result.put(FragmentParams.NAME.getName(), ((Nameable) item).getName());
@@ -192,7 +192,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         // Notify model provider that the tab has been revealed
         modelProvider.onSubTabSelected();
 
-        T entity = (T) modelProvider.getModel().getEntity();
+        E entity = modelProvider.getModel().getEntity();
         if (entity != null) {
             onDetailModelEntityChange(entity);
         }
@@ -231,7 +231,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             params = FragmentParams.getParams(placeManager.getCurrentPlaceRequest());
         }
         final String fragmentNameValue = request.getParameter(FragmentParams.NAME.getName(), "");
-        final List<T> itemToSwitchTo;
+        final List<E> itemToSwitchTo;
         if (params.contains(FragmentParams.NAME)) {
             // Someone passed a fragment with a name here.
             itemToSwitchTo = switchToName(fragmentNameValue, request);
@@ -267,11 +267,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         });
     }
 
-    private List<T> switchToName(String name, PlaceRequest request) {
+    private List<E> switchToName(String name, PlaceRequest request) {
         if (!"".equals(name)) {
-            List<T> namedItems = (List<T>) FragmentParams.findItemByName(name, getMainModel());
+            List<E> namedItems = (List<E>) FragmentParams.findItemByName(name, getMainModel());
             if (namedItems != null && !namedItems.isEmpty()) {
-                final List<T> filteredItems = filterByAdditionalParams(namedItems, request);
+                final List<E> filteredItems = filterByAdditionalParams(namedItems, request);
                 getMainModel().getSelectionModel().clear();
                 // This needs to be deferred, so the 'clear' is registered by the selection model. The selection model
                 // schedules its resolution of changes so we want the clear to happen so when we select the entity
@@ -305,12 +305,12 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
      * @param param The set of parameters.
      * @return the filtered list of named items.
      */
-    protected List<T> filterByAdditionalParams(List<T> namedItems, PlaceRequest request) {
+    protected List<E> filterByAdditionalParams(List<E> namedItems, PlaceRequest request) {
         return namedItems;
     }
 
     @SuppressWarnings("unchecked")
-    protected ListWithDetailsModel<M, D, T> getMainModel() {
+    protected ListWithDetailsModel<?, E> getMainModel() {
         return modelProvider.getMainModel();
     }
 
@@ -367,7 +367,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     @SuppressWarnings("unchecked")
     protected void onDetailModelEntityChange(Object entity) {
         try {
-            getView().setMainSelectedItem((T) entity);
+            getView().setMainSelectedItem((E) entity);
         } catch (ClassCastException ex) {
             // Detail model entity type is different from main model item type.
             // This usually happens with synthetic item types that wrap multiple
@@ -377,11 +377,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         }
     }
 
-    protected DetailModelProvider<M, D> getModelProvider() {
+    protected DetailModelProvider<E, M, D> getModelProvider() {
         return modelProvider;
     }
 
-    protected AbstractMainSelectedItems<T> getSelectedMainItems() {
+    protected AbstractMainSelectedItems<E> getSelectedMainItems() {
         return selectedMainItems;
     }
 

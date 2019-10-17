@@ -22,7 +22,7 @@ import com.google.inject.Provider;
  * @param <M>
  *            List model type.
  */
-public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel> extends TabModelProvider<M> implements SearchableTableModelProvider<T, M> {
+public abstract class DataBoundTabModelProvider<E, T, M extends SearchableListModel<E, T>> extends TabModelProvider<E, M> implements SearchableTableModelProvider<E, T, M> {
 
     private AsyncDataProvider<T> dataProvider;
     private final Comparator<T> defaultComparator = new DefaultModelItemComparator<>();

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -14,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<TemplateGeneralModel> {
+public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<VmTemplate, TemplateGeneralModel> {
 
     interface Driver extends UiCommonEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
     }
@@ -48,7 +49,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider) {
+    public TemplateGeneralModelForm(ModelProvider<VmTemplate, TemplateGeneralModel> modelProvider) {
         super(modelProvider, 3, 7);
     }
 

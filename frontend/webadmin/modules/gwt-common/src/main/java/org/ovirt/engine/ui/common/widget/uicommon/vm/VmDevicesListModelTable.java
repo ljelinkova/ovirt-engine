@@ -15,13 +15,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDeviceFeEntity, VmDevicesListModel<VM>> {
+public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VM, VmDeviceFeEntity, VmDevicesListModel<VM>> {
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private HotUnplugColumn hotUnplugColumn;
 
     public VmDevicesListModelTable(
-            SearchableTableModelProvider<VmDeviceFeEntity, VmDevicesListModel<VM>> modelProvider,
+            SearchableTableModelProvider<VM, VmDeviceFeEntity, VmDevicesListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         // No action panel for vm devices list model table, passing null.
         super(modelProvider, eventBus, null, clientStorage, false);

@@ -15,7 +15,7 @@ public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> exten
 
     @UiField(provided = true)
     @WithElementId
-    public AbstractActionPanel<T> actionPanel;
+    public AbstractActionPanel<?, T, ?> actionPanel;
 
     @UiField(provided = true)
     @WithElementId("display")
@@ -33,12 +33,12 @@ public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> exten
 
     protected abstract W createDataDisplayWidget(M modelProvider);
 
-    protected abstract AbstractActionPanel<T> createActionPanel(M modelProvider);
+    protected abstract AbstractActionPanel<?, T, ?> createActionPanel(M modelProvider);
 
     void addDoubleClickHandler(final W widget, final M modelProvider) {
-        if (modelProvider instanceof SearchableTableModelProvider<?, ?>) {
+        if (modelProvider instanceof SearchableTableModelProvider<?, ?, ?>) {
             widget.addDomHandler(event -> {
-                SearchableListModel model = ((SearchableTableModelProvider<?, ?>) modelProvider).getModel();
+                SearchableListModel model = ((SearchableTableModelProvider<?, ?, ?>) modelProvider).getModel();
                 UICommand command = model.getDoubleClickCommand();
                 if (command != null && command.getIsExecutionAllowed()) {
                     DeferredModelCommandInvoker invoker = new DeferredModelCommandInvoker(model);

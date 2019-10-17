@@ -54,7 +54,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     private AbstractTextColumn<VM> attachmentToCurHostColumn;
 
     @Inject
-    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
+    public SubTabHostVmView(SearchableDetailModelProvider<VDS, VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(modelProvider);
 
         initTable();

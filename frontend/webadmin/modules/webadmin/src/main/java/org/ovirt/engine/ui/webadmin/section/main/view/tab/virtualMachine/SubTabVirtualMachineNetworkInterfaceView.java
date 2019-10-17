@@ -34,7 +34,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
 
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
-            SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider,
+            SearchableDetailModelProvider<VM, VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider,
             EventBus eventBus, VmInterfaceActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider);

@@ -18,12 +18,11 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends AbstractModelBoundTableWidget<Disk, T> {
+public class BaseVmDiskListModelTable<E, M extends VmDiskListModelBase<E>> extends AbstractModelBoundTableWidget<E, Disk, M> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private DisksViewRadioGroup disksViewRadioGroup;
@@ -49,9 +48,9 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
 
 
     public BaseVmDiskListModelTable(
-            SearchableTableModelProvider<Disk, T> modelProvider,
+            SearchableTableModelProvider<E, Disk, M> modelProvider,
             EventBus eventBus,
-            DetailActionPanelPresenterWidget<Disk, VmListModel<Void>, T> actionPanel,
+            DetailActionPanelPresenterWidget<E, Disk, ?, M> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }

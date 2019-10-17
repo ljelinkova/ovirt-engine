@@ -17,7 +17,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
-public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
+public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel<Void, T>>
     extends PresenterWidget<OvirtBreadCrumbsPresenterWidget.ViewDef> implements ListModelSelectedCallback<T> {
 
     public interface ViewDef<T> extends View {

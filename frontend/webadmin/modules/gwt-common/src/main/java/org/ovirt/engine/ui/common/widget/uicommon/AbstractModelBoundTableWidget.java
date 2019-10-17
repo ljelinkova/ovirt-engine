@@ -31,22 +31,22 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
  * @param <M>
  *            List model type.
  */
-public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListModel> extends Composite {
+public abstract class AbstractModelBoundTableWidget<E, T, M extends SearchableListModel<E, T>> extends Composite {
 
-    private final SearchableTableModelProvider<T, M> modelProvider;
+    private final SearchableTableModelProvider<E, T, M> modelProvider;
 
     private final EventBus eventBus;
     private final boolean useMainTableResources;
 
     // an empty container that can be bound in the view to the ActionPanel
     private final SimplePanel actionPanelContainer = new SimplePanel();
-    private final SimpleActionTable<T> table;
+    private final SimpleActionTable<E, T, M> table;
     private final FlowPanel wrappedWidget;
     private HandlerRegistration registration;
     private PlaceTransitionHandler placeTransitionHandler;
 
-    public AbstractModelBoundTableWidget(SearchableTableModelProvider<T, M> modelProvider,
-            EventBus eventBus, DetailActionPanelPresenterWidget<T, ?, M> actionPanel, ClientStorage clientStorage,
+    public AbstractModelBoundTableWidget(SearchableTableModelProvider<E, T, M> modelProvider,
+            EventBus eventBus, DetailActionPanelPresenterWidget<E, T, ?, M> actionPanel, ClientStorage clientStorage,
             boolean useMainTableResources) {
         this.modelProvider = modelProvider;
         this.eventBus = eventBus;
@@ -86,8 +86,8 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
         return getTable() != null ? getTable().getSelectionModel().asMultiSelectionModel().getSelectedList() : null;
     }
 
-    SimpleActionTable<T> createActionTable(EventBus eventBus, ClientStorage clientStorage) {
-        return new SimpleActionTable<T>(modelProvider,
+    SimpleActionTable<E, T, M> createActionTable(EventBus eventBus, ClientStorage clientStorage) {
+        return new SimpleActionTable<E, T, M>(modelProvider,
                 getTableResources(),
                 eventBus, clientStorage) {
             {
@@ -129,11 +129,11 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
         return wrappedWidget;
     }
 
-    public SimpleActionTable<T> getTable() {
+    public SimpleActionTable<E, T, M> getTable() {
         return table;
     }
 
-    protected SearchableTableModelProvider<T, M> getModelProvider() {
+    protected SearchableTableModelProvider<E, T, M> getModelProvider() {
         return modelProvider;
     }
 

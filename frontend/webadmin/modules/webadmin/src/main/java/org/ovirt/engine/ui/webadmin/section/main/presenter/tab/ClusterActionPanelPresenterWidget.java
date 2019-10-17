@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidget<Cluster, ClusterListModel<Void>> {
+public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, Cluster, ClusterListModel<Void>> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 

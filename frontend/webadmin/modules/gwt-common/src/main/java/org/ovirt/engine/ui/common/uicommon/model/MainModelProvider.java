@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  * @param <M>
  *            Main model type.
  */
-public interface MainModelProvider<T, M extends SearchableListModel> extends SearchableTableModelProvider<T, M> {
+public interface MainModelProvider<T, M extends SearchableListModel<Void, T>> extends SearchableTableModelProvider<Void, T, M> {
 
     /**
      * Notifies {@link org.ovirt.engine.ui.uicommonweb.models.CommonModel} that the corresponding main tab has been selected.

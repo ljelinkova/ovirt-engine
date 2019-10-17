@@ -20,7 +20,14 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
-public abstract class ActionPanelPresenterWidget<T, M extends SearchableListModel> extends
+/**
+ * Represents an action panel that contains action buttons.
+ *
+ * @param <E> The type of the main entity
+ * @param <T> The type of the detail entity
+ * @param <M> Detail entity searchable list model
+ */
+public abstract class ActionPanelPresenterWidget<E, T, M extends SearchableListModel<E, T>> extends
     PresenterWidget<ActionPanelPresenterWidget.ViewDef<T>> implements ActionPanel<T>, SelectedItemsProvider<T> {
 
     public interface ViewDef<T> extends View, HasElementId, ProvidesElementId {
@@ -80,10 +87,10 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         Map<ActionButtonDefinition<T>, ActionButton> getActionItems();
     }
 
-    private final SearchableTableModelProvider<T, M> dataProvider;
+    private final SearchableTableModelProvider<E, T, M> dataProvider;
     private final List<ActionButtonDefinition<T>> actionButtonDefinitions = new ArrayList<>();
 
-    public ActionPanelPresenterWidget(EventBus eventBus, ViewDef<T> view, SearchableTableModelProvider<T, M> dataProvider) {
+    public ActionPanelPresenterWidget(EventBus eventBus, ViewDef<T> view, SearchableTableModelProvider<E, T, M> dataProvider) {
         super(eventBus, view);
         this.dataProvider = dataProvider;
         initializeButtons();
@@ -180,7 +187,6 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         });
     }
 
-    @SuppressWarnings("unchecked")
     void addSelectionChangeListener(IEventListener<EventArgs> itemSelectionChangeHandler) {
         dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
         dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
@@ -205,7 +211,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         getView().setFilterResult(resultPanel);
     }
 
-    public SearchableTableModelProvider<T, M> getDataProvider() {
+    public SearchableTableModelProvider<E, T, M> getDataProvider() {
         return dataProvider;
     }
 

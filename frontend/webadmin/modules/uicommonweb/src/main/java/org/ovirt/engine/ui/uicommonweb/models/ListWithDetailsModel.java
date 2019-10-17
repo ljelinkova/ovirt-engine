@@ -8,31 +8,34 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 /**
- * @param <E> {@link org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.E}
- * @param <D> type of the detail entity
- * @param <T> {@link org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.T}
+ *
+ * List with main entity, detail entities and sub detail entities.
+ *
+ * @param <E> The type of the main entity.
+ * @param <D> The type of the detail entity
+ * @param <T> The type of the sub detail entities
  */
-public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<E, T> {
+public abstract class ListWithDetailsModel<E, T> extends SearchableListModel<E, T> {
 
     private static final String ACTIVE_DETAIL_MODELS = "ActiveDetailModels"; //$NON-NLS-1$
     private static final String DETAIL_MODELS = "DetailModels"; // $NON-NLS-1$
 
-    private List<HasEntity<D>> detailModels;
+    private List<HasEntity<T>> detailModels;
 
-    public List<HasEntity<D>> getDetailModels() {
+    public List<HasEntity<T>> getDetailModels() {
         return detailModels;
     }
 
-    public void setDetailModels(List<HasEntity<D>> value) {
+    public void setDetailModels(List<HasEntity<T>> value) {
         if (detailModels != value) {
             detailModels = value;
             onPropertyChanged(new PropertyChangedEventArgs(DETAIL_MODELS));
         }
     }
 
-    private List<HasEntity<D>> activeDetailModels = new ArrayList<>();
+    private List<HasEntity<T>> activeDetailModels = new ArrayList<>();
 
-    public HasEntity<D> getActiveDetailModel() {
+    public HasEntity<T> getActiveDetailModel() {
         return activeDetailModels.isEmpty() ? null : activeDetailModels.get(0);
     }
 
@@ -42,7 +45,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
         }
     }
 
-    public void setActiveDetailModel(HasEntity<D> value) {
+    public void setActiveDetailModel(HasEntity<T> value) {
         if (!activeDetailModels.contains(value)) {
             activeDetailModelChanging(value, true);
             activeDetailModels.clear();
@@ -52,7 +55,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
         }
     }
 
-    public void addActiveDetailModel(HasEntity<D> value) {
+    public void addActiveDetailModel(HasEntity<T> value) {
         if (!activeDetailModels.contains(value)) {
             activeDetailModelChanging(value, false);
             activeDetailModels.add(value);
@@ -64,9 +67,9 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
     protected void updateDetailsAvailability() {
     }
 
-    private void activeDetailModelChanging(HasEntity<D> newValue, boolean stopRefresh) {
+    private void activeDetailModelChanging(HasEntity<T> newValue, boolean stopRefresh) {
         if (stopRefresh) {
-            for (HasEntity<D> oldValue : activeDetailModels) {
+            for (HasEntity<T> oldValue : activeDetailModels) {
                 // Make sure we had set an entity property of details model.
                 if (oldValue != null) {
                     oldValue.setEntity(null);
@@ -83,7 +86,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
         }
     }
 
-    protected abstract D provideDetailModelEntity(T selectedItem);
+    protected abstract T provideDetailModelEntity(T selectedItem);
 
     @Override
     protected void onSelectedItemChanged() {
@@ -95,8 +98,8 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
             if (getDetailModels() != null) {
                 if ((getActiveDetailModel() != null && !getActiveDetailModel().getIsAvailable())
                         || getActiveDetailModel() == null) {
-                    HasEntity<D> model = null;
-                    for (HasEntity<D> item : getDetailModels()) {
+                    HasEntity<T> model = null;
+                    for (HasEntity<T> item : getDetailModels()) {
                         if (item.getIsAvailable()) {
                             model = item;
                             break;
@@ -113,7 +116,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
         }
 
         // Synchronize selected item with the entity of an active details model.
-        HasEntity<D> activeDetailModel = getActiveDetailModel();
+        HasEntity<T> activeDetailModel = getActiveDetailModel();
         if (getSelectedItem() != null && activeDetailModel != null) {
             if (activeDetailModel instanceof HostInterfaceListModel) {
                 ((HostInterfaceListModel) activeDetailModel).setEntity((VDS) provideDetailModelEntity(getSelectedItem()));
@@ -132,7 +135,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
 
         if (getDetailModels() != null) {
             // Stop search on all list models.
-            for (HasEntity<D> model : getDetailModels()) {
+            for (HasEntity<T> model : getDetailModels()) {
                 if (model instanceof SearchableListModel) {
                     SearchableListModel listModel = (SearchableListModel) model;
                     listModel.stopRefresh();

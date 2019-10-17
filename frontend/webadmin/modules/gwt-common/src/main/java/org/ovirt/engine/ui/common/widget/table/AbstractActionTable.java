@@ -64,7 +64,7 @@ import com.google.gwt.view.client.SelectionModel;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasColumns<T> {
+public abstract class AbstractActionTable<E, T, M extends SearchableListModel<E, T>> extends AbstractActionPanel<E, T, M> implements ActionTable<T>, HasColumns<T> {
 
     private static final String ARIA_EXPANDED = "aria-expanded"; //$NON-NLS-1$
     private static final String OPEN = "open";  //$NON-NLS-1$
@@ -112,7 +112,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     private RowVisitor<T> rowVisitor;
 
-    public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
+    public AbstractActionTable(final SearchableTableModelProvider<E, T, M> dataProvider,
             Resources resources, ClientStorage clientStorage) {
         super(dataProvider);
         this.selectionModel = dataProvider.getModel().getSelectionModel();
@@ -307,8 +307,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     @Override
-    protected SearchableTableModelProvider<T, ?> getDataProvider() {
-        return (SearchableTableModelProvider<T, ?>) super.getDataProvider();
+    protected SearchableTableModelProvider<E, T, M> getDataProvider() {
+        return (SearchableTableModelProvider<E, T, M>) super.getDataProvider();
     }
 
     @Override

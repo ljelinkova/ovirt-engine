@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfileView, VnicProfileView> {
+public class VnicProfileListModel extends ListWithSimpleDetailsModel<Void, VnicProfileView> {
 
     private UICommand newCommand;
     private UICommand editCommand;

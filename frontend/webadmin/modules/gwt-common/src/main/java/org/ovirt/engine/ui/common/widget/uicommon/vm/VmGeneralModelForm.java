@@ -4,6 +4,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import static org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel.CONFIGURED_CPU_TYPE_PROPERTY_CHANGE;
 import static org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel.GUEST_CPU_TYPE_PROPERTY_CHANGE;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -26,7 +27,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralModel> {
+public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VM, VmGeneralModel> {
 
     interface Driver extends UiCommonEditorDriver<VmGeneralModel, VmGeneralModelForm> {
     }

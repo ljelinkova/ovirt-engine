@@ -22,12 +22,12 @@ import com.google.gwt.event.shared.EventBus;
  * @param <T>
  *            Detail model type.
  */
-public class EventListModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
+public class EventListModelTable<E, M extends EventListModel<E>> extends AbstractModelBoundTableWidget<E, AuditLog, M> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public EventListModelTable(
-            SearchableTableModelProvider<AuditLog, T> modelProvider,
+            SearchableTableModelProvider<E, AuditLog, M> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         // No action panel for events, so passing null.
         super(modelProvider, eventBus, null, clientStorage, false);

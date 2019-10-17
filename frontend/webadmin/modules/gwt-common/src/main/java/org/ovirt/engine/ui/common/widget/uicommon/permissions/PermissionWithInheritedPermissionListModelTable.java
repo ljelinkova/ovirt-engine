@@ -8,17 +8,18 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel<?>> extends PermissionListModelTable<P> {
+public class PermissionWithInheritedPermissionListModelTable<E, M extends ListWithDetailsModel<?, E>, P extends PermissionListModel<E>> extends PermissionListModelTable<E, M, P> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionWithInheritedPermissionListModelTable(
-            SearchableTableModelProvider<Permission, P> modelProvider,
-            EventBus eventBus, PermissionActionPanelPresenterWidget<?, P> actionPanel, ClientStorage clientStorage) {
+            SearchableTableModelProvider<E, Permission, P> modelProvider,
+            EventBus eventBus, PermissionActionPanelPresenterWidget<E, M, P> actionPanel, ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage);
     }
 

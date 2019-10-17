@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes;
 
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -11,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTy
 
 import com.google.gwt.core.client.GWT;
 
-public class InstanceTypeGeneralModelForm extends AbstractModelBoundFormWidget<InstanceTypeGeneralModel> {
+public class InstanceTypeGeneralModelForm extends AbstractModelBoundFormWidget<InstanceType, InstanceTypeGeneralModel> {
 
     interface Driver extends UiCommonEditorDriver<InstanceTypeGeneralModel, InstanceTypeGeneralModelForm> {
     }
@@ -23,7 +24,7 @@ public class InstanceTypeGeneralModelForm extends AbstractModelBoundFormWidget<I
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    public InstanceTypeGeneralModelForm(ModelProvider<InstanceTypeGeneralModel> modelProvider) {
+    public InstanceTypeGeneralModelForm(ModelProvider<InstanceType, InstanceTypeGeneralModel> modelProvider) {
         super(modelProvider, 1, 2);
         driver.initialize(this);
 

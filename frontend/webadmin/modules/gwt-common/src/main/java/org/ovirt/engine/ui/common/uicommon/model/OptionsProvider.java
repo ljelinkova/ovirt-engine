@@ -12,7 +12,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class OptionsProvider extends TabModelProvider<OptionsModel> {
+public class OptionsProvider extends TabModelProvider<EditOptionsModel, OptionsModel> {
 
     private final Provider<OptionsPopupPresenterWidget> optionsPopupProvider;
 

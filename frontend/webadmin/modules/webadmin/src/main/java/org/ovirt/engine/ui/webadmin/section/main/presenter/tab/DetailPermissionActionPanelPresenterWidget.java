@@ -15,15 +15,15 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class DetailPermissionActionPanelPresenterWidget<
-    M extends ListWithDetailsModel, P extends PermissionListModel<?>>
-        extends DetailActionPanelPresenterWidget<Permission, M, P> {
+    E, M extends ListWithDetailsModel<?, ?, E>, P extends PermissionListModel<E>>
+        extends DetailActionPanelPresenterWidget<E, Permission, M, P> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public DetailPermissionActionPanelPresenterWidget(EventBus eventBus,
             DetailActionPanelPresenterWidget.ViewDef<Permission> view,
-            SearchableDetailModelProvider<Permission, M, P> dataProvider) {
+            SearchableDetailModelProvider<E, Permission, M, P> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 

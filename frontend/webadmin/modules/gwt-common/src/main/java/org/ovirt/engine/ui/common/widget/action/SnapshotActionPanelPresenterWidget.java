@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
@@ -17,14 +18,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class SnapshotActionPanelPresenterWidget extends
-    DetailActionPanelPresenterWidget<Snapshot, VmListModel<Void>, VmSnapshotListModel> {
+    DetailActionPanelPresenterWidget<VM, Snapshot, VmListModel<Void>, VmSnapshotListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SnapshotActionPanelPresenterWidget(EventBus eventBus,
            DetailActionPanelPresenterWidget.ViewDef<Snapshot> view,
-           SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> dataProvider) {
+           SearchableDetailModelProvider<VM, Snapshot, VmListModel<Void>, VmSnapshotListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 

@@ -15,7 +15,7 @@ import com.google.inject.Provider;
  * @param <M>
  *            List model type.
  */
-public class MainViewModelProvider<T, M extends SearchableListModel> extends SearchableTabModelProvider<T, M> implements MainModelProvider<T, M> {
+public class MainViewModelProvider<T, M extends SearchableListModel<Void, T>> extends SearchableTabModelProvider<Void, T, M> implements MainModelProvider<T, M> {
 
     @Inject
     public MainViewModelProvider(EventBus eventBus,

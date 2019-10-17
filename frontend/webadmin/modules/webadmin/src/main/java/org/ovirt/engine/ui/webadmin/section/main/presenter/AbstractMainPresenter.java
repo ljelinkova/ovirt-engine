@@ -24,16 +24,16 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V extends View,
+public abstract class AbstractMainPresenter<T, M extends SearchableListModel<Void, T>, V extends View,
     P extends ProxyPlace<?>> extends Presenter<V, P> {
 
     protected final ApplicationPlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
-    private final ActionPanelPresenterWidget<?, ?> actionPanel;
+    private final ActionPanelPresenterWidget<?, ?, ?> actionPanel;
 
     public AbstractMainPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
-            ActionPanelPresenterWidget<T, M> actionPanel) {
+            ActionPanelPresenterWidget<?, ?, ?> actionPanel) {
         super(eventBus, view, proxy, MainContentPresenter.TYPE_SetContent);
         this.actionPanel = actionPanel;
         this.placeManager = (ApplicationPlaceManager) placeManager;
@@ -82,7 +82,7 @@ public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V 
         return getMainViewRequest().getNameToken().equals(placeName);
     }
 
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

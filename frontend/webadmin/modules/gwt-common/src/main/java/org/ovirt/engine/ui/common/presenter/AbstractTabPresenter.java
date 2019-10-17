@@ -24,15 +24,15 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public abstract class AbstractTabPresenter<V extends View, P extends TabContentProxyPlace<?>> extends Presenter<V, P> {
 
     private PluginActionButtonHandler actionButtonPluginHandler;
-    private final ActionPanelPresenterWidget<?, ?> actionPanel;
+    private final ActionPanelPresenterWidget<?, ?, ?> actionPanel;
 
-    public AbstractTabPresenter(EventBus eventBus, V view, P proxy, ActionPanelPresenterWidget<?, ?> actionPanel,
+    public AbstractTabPresenter(EventBus eventBus, V view, P proxy, ActionPanelPresenterWidget<?, ?, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, slot);
         this.actionPanel = actionPanel;
     }
 
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

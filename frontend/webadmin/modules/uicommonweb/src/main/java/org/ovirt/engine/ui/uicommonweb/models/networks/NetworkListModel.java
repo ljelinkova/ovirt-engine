@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> {
+public class NetworkListModel extends ListWithSimpleDetailsModel<Void, NetworkView> {
 
     private UICommand newCommand;
     private UICommand importCommand;

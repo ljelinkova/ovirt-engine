@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 
-public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends Composite implements
+public class ListModelSearchBox<T, M extends SearchableListModel<Void, T>> extends Composite implements
     ClickHandler {
 
     interface WidgetUiBinder extends UiBinder<Widget, ListModelSearchBox<?, ?>> {

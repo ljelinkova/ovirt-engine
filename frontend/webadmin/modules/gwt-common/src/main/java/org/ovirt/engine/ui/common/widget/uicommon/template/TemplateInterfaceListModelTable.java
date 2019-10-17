@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -25,14 +26,14 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 
-public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidget<VmNetworkInterface, TemplateInterfaceListModel> {
+public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidget<VmTemplate, VmNetworkInterface, TemplateInterfaceListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final TemplateListModel templateListModel;
 
     public TemplateInterfaceListModelTable(
-            SearchableTableModelProvider<VmNetworkInterface, TemplateInterfaceListModel> modelProvider,
+            SearchableTableModelProvider<VmTemplate, VmNetworkInterface, TemplateInterfaceListModel> modelProvider,
             EventBus eventBus, TemplateInterfaceActionPanelPresenterWidget actionPanel, ClientStorage clientStorage,
             TemplateListModel templateListModel) {
         super(modelProvider, eventBus, actionPanel, clientStorage, false);

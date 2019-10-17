@@ -13,17 +13,18 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permission, P> {
+public class PermissionListModelTable<E, M extends ListWithDetailsModel<?, E>, P extends PermissionListModel<E>> extends AbstractModelBoundTableWidget<E, Permission, P> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionListModelTable(
-            SearchableTableModelProvider<Permission, P> modelProvider,
-            EventBus eventBus, PermissionActionPanelPresenterWidget<?, P> actionPanel, ClientStorage clientStorage) {
+            SearchableTableModelProvider<E, Permission, P> modelProvider,
+            EventBus eventBus, PermissionActionPanelPresenterWidget<E, M, P> actionPanel, ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }
 

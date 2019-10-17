@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -19,9 +20,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SimpleActionTable<T> extends AbstractActionTable<T> {
+public class SimpleActionTable<E, T, M extends SearchableListModel<E, T>> extends AbstractActionTable<E, T, M> {
 
-    interface WidgetUiBinder extends UiBinder<FlowPanel, SimpleActionTable<?>> {
+    interface WidgetUiBinder extends UiBinder<FlowPanel, SimpleActionTable<?, ?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
@@ -44,25 +45,25 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     @UiField
     FlowPanel controlsContainer;
 
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+    public SimpleActionTable(SearchableTableModelProvider<E, T, M> dataProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         this(dataProvider, null, eventBus, clientStorage);
     }
 
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+    public SimpleActionTable(SearchableTableModelProvider<E, T, M> dataProvider,
             EventBus eventBus, ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
         this(dataProvider, null, eventBus, clientStorage, refreshManager);
     }
 
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+    public SimpleActionTable(SearchableTableModelProvider<E, T, M> dataProvider,
             Resources resources,
             EventBus eventBus, ClientStorage clientStorage) {
         this(dataProvider, resources, eventBus, clientStorage,
                 new SimpleRefreshManager(dataProvider, eventBus, clientStorage));
     }
 
-    public SimpleActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
+    public SimpleActionTable(final SearchableTableModelProvider<E, T, M> dataProvider,
             Resources resources, EventBus eventBus, ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
         super(dataProvider, resources, clientStorage);

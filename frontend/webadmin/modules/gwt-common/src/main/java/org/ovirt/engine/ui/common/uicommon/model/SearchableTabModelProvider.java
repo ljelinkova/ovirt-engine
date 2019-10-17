@@ -9,12 +9,14 @@ import com.google.inject.Provider;
 /**
  * Default {@link SearchableTableModelProvider} implementation for use with tab controls.
  *
+ * @param <E>
+ *            Main entity type.
  * @param <T>
- *            List model item type.
+ *            Detail entity type.
  * @param <M>
  *            List model type.
  */
-public abstract class SearchableTabModelProvider<T, M extends SearchableListModel> extends DataBoundTabModelProvider<T, M> implements SearchableTableModelProvider<T, M> {
+public abstract class SearchableTabModelProvider<E, T, M extends SearchableListModel<E, T>> extends DataBoundTabModelProvider<E, T, M> implements SearchableTableModelProvider<E, T, M> {
 
     public SearchableTabModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {

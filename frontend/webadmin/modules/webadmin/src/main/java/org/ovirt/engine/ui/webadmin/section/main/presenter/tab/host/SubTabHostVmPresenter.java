@@ -19,7 +19,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostVmPresenter
-    extends AbstractSubTabHostPresenter<HostVmListModel, SubTabHostVmPresenter.ViewDef,
+    extends AbstractSubTabHostPresenter<VM, HostVmListModel, SubTabHostVmPresenter.ViewDef,
         SubTabHostVmPresenter.ProxyDef> {
 
     @ProxyCodeSplit
@@ -39,7 +39,7 @@ public class SubTabHostVmPresenter
     public SubTabHostVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainSelectedItems selectedItems,
             HostVmActionPanelPresenterWidget actionPanel,
-            SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
+            SearchableDetailModelProvider<VDS, VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }

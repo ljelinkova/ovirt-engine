@@ -8,14 +8,14 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class QuotaBreadCrumbsPresenterWidget extends OvirtBreadCrumbsPresenterWidget<Quota, QuotaListModel> {
+public class QuotaBreadCrumbsPresenterWidget extends OvirtBreadCrumbsPresenterWidget<Quota, QuotaListModel<Void>> {
 
     public interface QuotaBreadCrumbsViewDef extends OvirtBreadCrumbsPresenterWidget.ViewDef<Quota> {
     }
 
     @Inject
     public QuotaBreadCrumbsPresenterWidget(EventBus eventBus, QuotaBreadCrumbsViewDef view,
-            MainModelProvider<Quota, QuotaListModel> listModelProvider) {
+            MainModelProvider<Quota, QuotaListModel<Void>> listModelProvider) {
         super(eventBus, view, listModelProvider);
     }
 
